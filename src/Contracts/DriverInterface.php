@@ -2,6 +2,8 @@
 
 namespace NodePile\PHPTelemetry\Contracts;
 
+use NodePile\PHPTelemetry\Models\Entry;
+
 interface DriverInterface
 {
 	/**
@@ -13,5 +15,5 @@ interface DriverInterface
 	 * 
 	 * @return void
 	 */
-	public function write(): void;
+	public function write(Entry $entry): void;
 }
