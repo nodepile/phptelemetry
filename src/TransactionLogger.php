@@ -73,7 +73,7 @@ class TransactionLogger implements TransactionLoggerInterface
 	 */
 	public function info(string $message, array $context = []): void 
 	{
-		$this->log(Level::info->value, $message, $context);
+		$this->log(Level::Info->value, $message, $context);
 	}
 
 	/**
