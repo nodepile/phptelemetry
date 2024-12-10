@@ -9,9 +9,7 @@ interface DriverInterface
 	/**
 	 * Log the given message & context.
 	 * 
-	 * @param string $level
-	 * @param string $message
-	 * @param array $context
+	 * @param Entry $entry
 	 * 
 	 * @return void
 	 */
