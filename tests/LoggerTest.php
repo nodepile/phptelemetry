@@ -6,9 +6,11 @@ use PHPUnit\Framework\TestCase;
 
 use NodePile\PHPTelemetry\Exceptions\InvalidLevelException;
 use NodePile\PHPTelemetry\Contracts\LoggerInterface;
+use NodePile\PHPTelemetry\Contracts\TransactionLoggerInterface;
 use NodePile\PHPTelemetry\Contracts\DriverManagerInterface;
 use NodePile\PHPTelemetry\Contracts\TimeProviderInterface;
 use NodePile\PHPTelemetry\Support\TimeProvider;
+use NodePile\PHPTelemetry\Support\IdGenerator;
 use NodePile\PHPTelemetry\Enums\Level;
 use NodePile\PHPTelemetry\Logger;
 
@@ -21,9 +23,11 @@ class LoggerTest extends TestCase
 		parent::setUp();
 
 		$driverManagerMock = $this->createMock(DriverManagerInterface::class);
-		$timeProvider = new TimeProvider();
 
-		$this->logger = new Logger($driverManagerMock, $timeProvider);
+		$timeProvider = new TimeProvider();
+		$idGenerator = new IdGenerator();
+
+		$this->logger = new Logger($driverManagerMock, $timeProvider, $idGenerator);
 	}
 
 	/**
@@ -69,7 +73,7 @@ class LoggerTest extends TestCase
 	}
 
 	/**
-	 * Test that log with unsupported level throws an InvalidLevelException
+	 * Test that log with unsupported level throws an InvalidLevelException.
 	 */
 	public function testLogThrowsExceptionForUnsupportedLevel()
 	{
@@ -77,6 +81,14 @@ class LoggerTest extends TestCase
 
 	 	$this->logger->log("armageddon", "This shouldn't log.", []);
 	} 
+
+	/**
+	 * Test that startTransaction returns a TransactionLoggerInterface instance.
+	 */
+	public function testStartTransactionReturnsCorrectInstance()
+	{
+		$this->assertInstanceOf(TransactionLoggerInterface::class, $this->logger->startTransaction([]));
+	}
 
 	public function tearDown(): void 
 	{

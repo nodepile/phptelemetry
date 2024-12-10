@@ -5,9 +5,12 @@ namespace NodePile\PHPTelemetry;
 use NodePile\PHPTelemetry\Exceptions\InvalidLevelException;
 use NodePile\PHPTelemetry\Contracts\DriverManagerInterface;
 use NodePile\PHPTelemetry\Contracts\LoggerInterface;
+use NodePile\PHPTelemetry\Contracts\TransactionLoggerInterface;
 use NodePile\PHPTelemetry\Contracts\TimeProviderInterface;
+use NodePile\PHPTelemetry\Contracts\IdGeneratorInterface;
 use NodePile\PHPTelemetry\Enums\Level;
 use NodePile\PHPTelemetry\Models\Entry;
+use NodePile\PHPTelemetry\Models\Transaction;
 
 class Logger implements LoggerInterface
 {	
@@ -22,15 +25,25 @@ class Logger implements LoggerInterface
 	private TimeProviderInterface $timeProvider;
 
 	/**
+	 * @var IdGenerator
+	 */
+	private IdGeneratorInterface $idGenerator;
+
+	/**
 	 * @var array
 	 */
 	private array $supportedLevels = [];
 
-	public function __construct(DriverManagerInterface $driverManager, TimeProviderInterface $timeProvider)
+	public function __construct(
+		DriverManagerInterface $driverManager, 
+		TimeProviderInterface $timeProvider,
+		IdGeneratorInterface $idGenerator
+	)
 	{
 		$this->driverManager = $driverManager;
 		$this->timeProvider = $timeProvider;
-
+		$this->idGenerator = $idGenerator;
+		
 		$this->supportedLevels = $this->loadDefaultLevels();
 	}
 
@@ -95,6 +108,20 @@ class Logger implements LoggerInterface
 		$entry = new Entry($this->timeProvider->now(), $level, $message, $context);
 
 		$this->driverManager->getCurrDriver()->write($entry);
+	}
+
+	/**
+	 * Start a new transaction.
+	 * 
+	 * @param array $context
+	 * 
+	 * @return TransactionLoggerInterface
+	 */
+	public function startTransaction(array $context = []): TransactionLoggerInterface
+	{
+		$transaction = new Transaction($this->idGenerator->generate(), $context);
+
+		return new TransactionLogger($this, $transaction);
 	}
 
 	/**
