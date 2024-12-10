@@ -55,6 +55,7 @@ $logger->warning("SSL handshake failed.", ['ip' => '123.4.5.6']);
 $logger->error("DB conn failed. The server went away.", ['code' => 2006]);
 
 // Log using custom levels.
+// Logging with a level that was not previously added using ->addLevel(...) will throw an InvalidLevelException 
 $logger->addLevel("custom");
 $logger->log("custom", "Log some custom message.", ['with' => 'or without context']);
 
