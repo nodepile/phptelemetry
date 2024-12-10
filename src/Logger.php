@@ -3,18 +3,34 @@
 namespace NodePile\PHPTelemetry;
 
 use NodePile\PHPTelemetry\Exceptions\InvalidLevelException;
+use NodePile\PHPTelemetry\Contracts\DriverManagerInterface;
 use NodePile\PHPTelemetry\Contracts\LoggerInterface;
+use NodePile\PHPTelemetry\Contracts\TimeProviderInterface;
 use NodePile\PHPTelemetry\Enums\Level;
+use NodePile\PHPTelemetry\Models\Entry;
 
 class Logger implements LoggerInterface
-{
+{	
+	/**
+	 * @var DriverManagerInterface
+	 */
+	private DriverManagerInterface $driverManager;
+
+	/**
+	 * @var TimeProviderInterface
+	 */
+	private TimeProviderInterface $timeProvider;
+
 	/**
 	 * @var array
 	 */
 	private array $supportedLevels = [];
 
-	public function __construct()
+	public function __construct(DriverManagerInterface $driverManager, TimeProviderInterface $timeProvider)
 	{
+		$this->driverManager = $driverManager;
+		$this->timeProvider = $timeProvider;
+
 		$this->supportedLevels = $this->loadDefaultLevels();
 	}
 
@@ -76,7 +92,9 @@ class Logger implements LoggerInterface
 			throw new InvalidLevelException("Level '{$level}' is not supported.");
 		}
 
-		// write the log
+		$entry = new Entry($this->timeProvider->now(), $level, $message, $context);
+
+		$this->driverManager->getCurrDriver()->write($entry);
 	}
 
 	/**
