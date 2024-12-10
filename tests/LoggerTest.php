@@ -5,18 +5,25 @@ namespace NodePile\PHPTelemetry\Tests;
 use PHPUnit\Framework\TestCase;
 
 use NodePile\PHPTelemetry\Exceptions\InvalidLevelException;
+use NodePile\PHPTelemetry\Contracts\LoggerInterface;
+use NodePile\PHPTelemetry\Contracts\DriverManagerInterface;
+use NodePile\PHPTelemetry\Contracts\TimeProviderInterface;
+use NodePile\PHPTelemetry\Support\TimeProvider;
 use NodePile\PHPTelemetry\Enums\Level;
 use NodePile\PHPTelemetry\Logger;
 
 class LoggerTest extends TestCase
 {
-	private Logger $logger;
+	private LoggerInterface $logger;
 
 	protected function setUp(): void
 	{
 		parent::setUp();
 
-		$this->logger = new Logger();
+		$driverManagerMock = $this->createMock(DriverManagerInterface::class);
+		$timeProvider = new TimeProvider();
+
+		$this->logger = new Logger($driverManagerMock, $timeProvider);
 	}
 
 	/**
@@ -25,9 +32,8 @@ class LoggerTest extends TestCase
 	public function testSupportedLevelsLoader()
 	{
 		$knownLevels = array_map(fn(Level $level) => $level->value, Level::cases());
-		$loadedLevels = $this->logger->getSupportedLevels();
 
-		$this->assertEqualsCanonicalizing($knownLevels, $loadedLevels);
+		$this->assertEqualsCanonicalizing($knownLevels, $this->logger->getSupportedLevels());
 	}
 
 	/**
@@ -63,7 +69,7 @@ class LoggerTest extends TestCase
 	}
 
 	/**
-	 * Test that log with unsupported level thros an InvalidLevelException
+	 * Test that log with unsupported level throws an InvalidLevelException
 	 */
 	public function testLogThrowsExceptionForUnsupportedLevel()
 	{
