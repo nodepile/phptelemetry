@@ -20,7 +20,7 @@ use NodePile\PHPTelemetry\Support\IdGenerator;
 use NodePile\PHPTelemetry\DriverManagerFactory;
 use NodePile\PHPTelemetry\Logger;
 
-// For now i createdf just a simple cli and a file driver but you can expand this by creating however many driver you need.
+// For now i created just a simple cli and a file driver but you can expand this by creating however many driver you need.
 $config = [
 	'default' => 'cli',
 
@@ -81,4 +81,4 @@ $logger->info("I am logged to a file.", ['with' => 'a different context']);
 
 ## Add a custom driver
 
-By default this package comes with just ```cli``` and ```file``` drivers. If you want to build your own driver for, let's say, Redis simply implement ```NodePile\PHPTelemetry\Contracts\DriverInterface``` and then pass it to the logger through the 'drivers' key in your config.
+By default this package comes with just ```cli``` and ```file``` drivers. If you want to build your own driver for, let's say, Redis simply implement ```NodePile\PHPTelemetry\Contracts\DriverInterface``` and then pass it to the driver manager through the 'drivers' key in your config.
