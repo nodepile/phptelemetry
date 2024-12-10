@@ -143,6 +143,18 @@ class Logger implements LoggerInterface
 	}
 
 	/**
+	 * Switch to using another driver.
+	 * 
+	 * @param string $name
+	 * 
+	 * @return void
+	 */
+	public function useDriver(string $name): void 
+	{
+		$this->driverManager->useDriver($name);
+	}
+
+	/**
 	 * Get all supported levels.
 	 * 
 	 * @return array 
