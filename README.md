@@ -1,3 +1,5 @@
+![Scr](https://i.imgur.com/9lDfVPR.png)
+
 ## Installation
 
 Install the latest version using
