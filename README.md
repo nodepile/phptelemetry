@@ -22,7 +22,8 @@ use NodePile\PHPTelemetry\Support\IdGenerator;
 use NodePile\PHPTelemetry\DriverManagerFactory;
 use NodePile\PHPTelemetry\Logger;
 
-// For now i created just a simple cli and a file driver but you can expand this by creating however many driver you need.
+// For now i created just a simple cli and a file driver but you can expand
+// this by creating however many drivers you need.
 $config = [
 	'default' => 'cli',
 
@@ -46,7 +47,8 @@ $driverManager = $driverManagerFactory->create($config);
 // You can pass your own time provider or the built in one.
 $timeProvider = new TimeProvider();
 
-// You can pass your own id generator (useful if you already have a standardized transaction id - trace - format).
+// You can pass your own id generator
+// (useful if you already have a standardized transaction/trace id format).
 $idGenerator = new IdGenerator();
 
 $logger = new Logger($driverManager, $timeProvider, $idGenerator);
@@ -56,9 +58,11 @@ $logger->info("User logged in successfully.", ['id' => 50]);
 $logger->warning("SSL handshake failed.", ['ip' => '123.4.5.6']);
 $logger->error("DB conn failed. The server went away.", ['code' => 2006]);
 
-// Log using custom levels.
-// Logging with a level that was not previously added using ->addLevel(...) will throw an InvalidLevelException 
+// Add custom log levels
 $logger->addLevel("custom");
+
+// Logging with a custom level that was not previously added using ->addLevel(...)
+// will throw an InvalidLevelException
 $logger->log("custom", "Log some custom message.", ['with' => 'or without context']);
 
 // Log during a transaction.
@@ -69,9 +73,8 @@ $transaction->info("Credentials validated successfully.");
 $transaction->error("Failed to log the user in.", ['reasons' => 'can be logged']);
 
 $transaction->endTransaction();
-
 // Trying to use the same transaction after it ended will result in a TransactionEndedException
-// $transaction->info("I should result in a runtime exception because the transaction ended.");
+// Running $transaction->info("Will throw a TransactionEndedException.");
 
 // Switch driver
 $logger->useDriver('cli');
